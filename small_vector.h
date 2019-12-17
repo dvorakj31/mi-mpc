@@ -26,7 +26,7 @@ namespace mpc
 
 
 	private:
-		T* data_;
+        T* data_;
 		typename std::aligned_storage<sizeof(T), alignof(T)>::type data_buf_[N];
 		size_t capacity_;
 		size_t size_;
@@ -42,7 +42,7 @@ namespace mpc
 			}
 			catch (...)
 			{
-				std::destroy(data_, data_ + i);
+				std::destroy(data, data + i); ::operator delete(data);
 				throw;
 			}
 			clear();
@@ -54,11 +54,21 @@ namespace mpc
 		}
 
     public:
-		constexpr small_vector() : data_(reinterpret_cast<T*>(data_buf_)), capacity_(N), size_(0) {}
-		constexpr small_vector(std::initializer_list<T> l)
+		small_vector() : data_(reinterpret_cast<T*>(data_buf_)), capacity_(N), size_(0) {}
+		small_vector(std::initializer_list<T> init) : small_vector()
 		{
-			for (auto& item : l)
-				push_back(item);
+		    if (init.size() > N)
+		        data_ = (T*)::operator new(sizeof(T) * init.size());
+		    size_ = capacity_ = init.size();
+            try
+            {
+                std::uninitialized_copy(init.begin(), init.end(), data_);
+            }
+            catch (...)
+            {
+                if (data_ != reinterpret_cast<T*>(data_buf_)) ::operator delete(data_);
+                throw;
+            }
 		}
 
 		small_vector(const small_vector& other)
@@ -67,12 +77,19 @@ namespace mpc
 				return;
 			data_ = (T*)::operator new(other.capacity_ * sizeof(T));
 			capacity_ = other.capacity_;
-			try { std::uninitialized_copy(other.data_, other.data_ + other.size_, data_); }
-			catch (...) { ::operator delete(data_); throw; }
+			try
+			{
+			    std::uninitialized_copy(other.data_, other.data_ + other.size_, data_);
+			}
+			catch (...)
+			{
+			    ::operator delete(data_); throw;
+			}
 			size_ = other.size_;
 		}
 
-		~small_vector() {
+		~small_vector()
+		{
 			clear();
 			if (data_ != reinterpret_cast<T*>(data_buf_))
 				::operator delete(data_);
@@ -80,68 +97,93 @@ namespace mpc
 
 		small_vector(small_vector&& other) noexcept :
 			data_(other.data_), capacity_(other.capacity_), size_(other.size_)
-		{			other.data_ = nullptr; other.capacity_ = other.size_ = 0;		}		small_vector& operator=(const small_vector& other)
 		{
-			if (capacity() < other.size())
-			{
-				small_vector temp(other);
-				swap(temp);
-			}
-			else if (this != &other)
-			{
-				clear(); std::uninitialized_copy(other.data_, other.data_ + other.size_, data_);
-				size_ = other.size_;
-			}
-			return *this;
-		}		small_vector& operator=(small_vector&& other) noexcept
-		{ 
-			swap(other);
-			other.clear(); 
+		    if (N == other.capacity_)
+		    {
+                std::move(other.data_buf_, other.data_buf_ + other.size_, data_buf_);
+                data_ = reinterpret_cast<T*>(data_buf_);
+            }
+			other.data_ = reinterpret_cast<T*>(other.data_buf_);
+			other.size_ = 0;
 		}
 
-		constexpr size_t size() const
+		small_vector& operator=(const small_vector& other)
+		{
+            if (capacity() < other.size())
+			{
+                small_vector tmp(other);
+                swap(tmp);
+            }
+			else if (this != &other)
+			{
+                clear();
+                try { std::uninitialized_copy(other.data_, other.data_ + other.size_, data_); }
+                catch (...) { ::operator delete(data_); throw; }
+			}
+            size_ = other.size_;
+            capacity_ = other.capacity_;
+            return *this;
+		}
+		small_vector& operator=(small_vector&& other) noexcept
+		{
+		    clear();
+            swap(other);
+            other.data_ = reinterpret_cast<T*>(other.data_buf_);
+			return *this;
+		}
+
+		size_t size() const
 		{
 			return size_;
 		}
 
-		constexpr size_t capacity() const
+        size_t capacity() const
 		{
 			return capacity_;
 		}
 
-		constexpr void reserve(size_t new_size)
+		pointer data()
+        {
+		    return data_;
+        }
+
+        const_pointer data() const
+        {
+		    return data_;
+        }
+
+		void reserve(size_t new_size)
 		{
 			if (new_size <= capacity_)
 				return;
 			_resize(new_size);
 		}
 
-		void push_back(const T& value)
+		void push_back(const value_type& value)
 		{
 			emplace_back(value);
 		}
 
-		void push_back(T&& value)
+		void push_back(value_type&& value)
 		{
 			emplace_back(std::move(value));
 		}
 
-		T& operator[](size_t index)
+        value_type& operator[](size_t index)
 		{
 			return data_[index];
 		}
 
-		const T& operator[](size_t index) const
+		const value_type& operator[](size_t index) const
 		{
 			return data_[index];
 		}
 
-		template <class... _Args>
-		void emplace_back(_Args&&... args)
-		{
+        template <typename... Ts>
+        void emplace_back(Ts&&... vs)		{
 			if (size_ == capacity_)
-				reserve(capacity_ == 0 ? 1 : 2 * capacity_);
-			new (data_ + size_) T(std::forward<_Args>(args)...);
+				reserve(capacity_ * 2);
+			new (data_ + size_) T(std::forward<Ts>(vs)...);
 			size_++;
 		}
 
@@ -153,10 +195,58 @@ namespace mpc
 
 		void swap(small_vector& rhs) noexcept
 		{
-			std::swap(data_, rhs.data_);
-			std::swap(size_, rhs.size_);
+		    if (data_ != reinterpret_cast<T*>(data_buf_) && rhs.data_ == reinterpret_cast<T*>(rhs.data_buf_))
+            {
+		        rhs.data_ = data_;
+		        data_ = reinterpret_cast<T*>(data_buf_);
+            }
+		    else if (rhs.data_ != reinterpret_cast<T*>(rhs.data_buf_) && data_ == reinterpret_cast<T*>(data_buf_))
+            {
+		        data_ = rhs.data_;
+		        rhs.data_ = reinterpret_cast<T*>(rhs.data_buf_);
+            }
+		    else if (data_ != reinterpret_cast<T*>(data_buf_) && rhs.data_ != reinterpret_cast<T*>(rhs.data_buf_))
+		    {
+                std::swap(data_, rhs.data_);
+            }
+            std::swap(data_buf_, rhs.data_buf_);
+            std::swap(size_, rhs.size_);
 			std::swap(capacity_, rhs.capacity_);
 		}
+
+        void resize(size_t size, const value_type& value = value_type())
+        {
+            if (size == size_) return;
+
+            else if (size < size_) std::destroy(data_ + size, data_ + size_);
+
+            else
+            {
+                _resize(size);
+                std::uninitialized_fill_n(end(), size - size_, value);
+            }
+            size_ = size;
+        }
+
+		iterator begin() noexcept
+        {
+		    return data_;
+        }
+
+        iterator end() noexcept
+        {
+		    return data_ + size_;
+        }
+
+        const_iterator begin() const noexcept
+        {
+            return data_;
+        }
+
+        const_iterator end() const noexcept
+        {
+            return data_ + size_;
+        }
     }; // class small vector
 
 	template <typename T, size_t N>

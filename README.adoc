@@ -1,23 +1,15 @@
 = Semestrální práce
 
-- Veškeré poznámky týkající se vašeho vypracování semestrální práce pište do tohoto dokumentu ve formátu Asciidoc.
-- Základní nápověda viz https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/#links[AsciiDoc Syntax Quick Reference].
-- Kompletní dokumentace viz https://asciidoctor.org/docs/[Asciidoctor Documentation].
-
-WARNING: Mějte na paměti, že formát Asciidoc se *neustále vyvíjí* a jeho implementace na fakultním serveru Gitlab *nemusí podporovat* veškerou funkcionalitu uvedenou v dokumentaci.
-
-TIP: Při editaci můžete *náhled výsledku* průběžně sledovat v *záložce Preview*.
-
-== Příklad vložení kódu {cpp}
-
-Základní podoba funkce `main` v {cpp}11:
-
-[source,cpp]
-----
-int main()
-{
-   // return 0 is implicit
-}
-----
-
-TIP: Pro *testovací účely* se může hodit služba https://asciidoclive.com/[asciidocLIVE].
+== Výsledky testů
+    - test 1: https://wandbox.org/permlink/mTDQnB1icDHOd2ST
+    - test 2: https://wandbox.org/permlink/jNS5PEfLxXHc9wx6
+    - test 3: https://wandbox.org/permlink/nIFJUZweJqpcwWmI
+    - test 4: https://wandbox.org/permlink/v1A97u9ed0tJW3qO
+    - test 5: https://wandbox.org/permlink/EEHpZA4MIS6tHjXO
+    - test 6: https://wandbox.org/permlink/YTi6arwSZtMipm8j
+    - test 7: https://wandbox.org/permlink/dBN3JzpD20AMVfoV
+    - test 8: https://wandbox.org/permlink/Lj5UMvEYbEcarOEj
+    - test 9: https://wandbox.org/permlink/WeuPm0CKNTiRWae9
+    - test 10: https://wandbox.org/permlink/Y8tmLEjBWHoa7t0r
+    - test 11: https://wandbox.org/permlink/ooThKZhlkUyKidEV
+    - test 12: https://wandbox.org/permlink/dUliZHeIgdOsKw6Y
