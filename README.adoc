@@ -1,15 +1,15 @@
 = Semestrální práce
 
 == Výsledky testů
-    - test 1: https://wandbox.org/permlink/mTDQnB1icDHOd2ST
-    - test 2: https://wandbox.org/permlink/jNS5PEfLxXHc9wx6
-    - test 3: https://wandbox.org/permlink/nIFJUZweJqpcwWmI
-    - test 4: https://wandbox.org/permlink/v1A97u9ed0tJW3qO
-    - test 5: https://wandbox.org/permlink/EEHpZA4MIS6tHjXO
-    - test 6: https://wandbox.org/permlink/YTi6arwSZtMipm8j
-    - test 7: https://wandbox.org/permlink/dBN3JzpD20AMVfoV
-    - test 8: https://wandbox.org/permlink/Lj5UMvEYbEcarOEj
-    - test 9: https://wandbox.org/permlink/WeuPm0CKNTiRWae9
-    - test 10: https://wandbox.org/permlink/Y8tmLEjBWHoa7t0r
-    - test 11: https://wandbox.org/permlink/ooThKZhlkUyKidEV
-    - test 12: https://wandbox.org/permlink/dUliZHeIgdOsKw6Y
+    - test 1: https://wandbox.org/permlink/h5RdKoAXU9eST1HX
+    - test 2: https://wandbox.org/permlink/qkWtO2ILDZgWYu49
+    - test 3: https://wandbox.org/permlink/3mGVwpJwEwoU63nM
+    - test 4: https://wandbox.org/permlink/YKHCCDEV7R4PCgqa
+    - test 5: https://wandbox.org/permlink/Wn7CxZ12DY2iUyyG
+    - test 6: https://wandbox.org/permlink/RMyuQQOte1LBqbKG
+    - test 7: https://wandbox.org/permlink/2tcardSPQRdBB6Dx
+    - test 8: https://wandbox.org/permlink/cnKeGQSakgXk723j
+    - test 9: https://wandbox.org/permlink/K3iJCFzEzYPB4KVT
+    - test 10: https://wandbox.org/permlink/JiSfyB7dwapx1Mqi
+    - test 11: https://wandbox.org/permlink/53YKwwNuZavrJvZS
+    - test 12: https://wandbox.org/permlink/myFFYj61ZMRhGl9s

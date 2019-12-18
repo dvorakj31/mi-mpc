@@ -15,6 +15,8 @@ namespace mpc
     class small_vector
     {
 
+		static_assert(N > 0);
+
 	public:
 		using value_type = T;
 		using reference = T&;
@@ -54,7 +56,8 @@ namespace mpc
 		}
 
     public:
-		small_vector() : data_(reinterpret_cast<T*>(data_buf_)), capacity_(N), size_(0) {}
+		small_vector() : data_(reinterpret_cast<T*>(data_buf_)), capacity_(N), size_(0){}
+
 		small_vector(std::initializer_list<T> init) : small_vector()
 		{
 		    if (init.size() > N)
@@ -98,10 +101,11 @@ namespace mpc
 		small_vector(small_vector&& other) noexcept :
 			data_(other.data_), capacity_(other.capacity_), size_(other.size_)
 		{
-		    if (N == other.capacity_)
+		    if (other.data_ == reinterpret_cast<T*>(other.data_buf_))
 		    {
-                std::move(other.data_buf_, other.data_buf_ + other.size_, data_buf_);
+                std::uninitialized_move(other.data_buf_, other.data_buf_ + other.size_, data_buf_);
                 data_ = reinterpret_cast<T*>(data_buf_);
+				other.clear();
             }
 			other.data_ = reinterpret_cast<T*>(other.data_buf_);
 			other.size_ = 0;
@@ -124,10 +128,13 @@ namespace mpc
             capacity_ = other.capacity_;
             return *this;
 		}
+
 		small_vector& operator=(small_vector&& other) noexcept
 		{
 		    clear();
             swap(other);
+			if (other.data_ == reinterpret_cast<T*>(other.data_buf_))
+				other.clear();
             other.data_ = reinterpret_cast<T*>(other.data_buf_);
 			return *this;
 		}
