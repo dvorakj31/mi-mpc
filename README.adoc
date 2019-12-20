@@ -1,5 +1,7 @@
 = Semestrální práce
 
+    - Implementace využívá funkce C++17.
+
 == Výsledky testů
     - test 1: https://wandbox.org/permlink/h5RdKoAXU9eST1HX
     - test 2: https://wandbox.org/permlink/qkWtO2ILDZgWYu49
